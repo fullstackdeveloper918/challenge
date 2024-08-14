@@ -9,7 +9,7 @@ import base64, requests, subprocess
 
 
 class UserManager(BaseUserManager):
-    def create_user(self, email, password=None, **kwargs):
+    def create_user(self, email, password=None , **kwargs):
 
         if not email:
             raise ValueError("Email is required")
@@ -32,11 +32,13 @@ class UserManager(BaseUserManager):
 
         user.first_name = kwargs.get('first_name')
         user.last_name = kwargs.get('last_name')
+        user.wallet_address =  kwargs.get('wallet_address')
         user.is_admin = True
         user.is_staff = True
         user.is_superuser = True
         user.save(using=self._db)
         return
+
 
 
 class User(AbstractBaseUser):
@@ -47,6 +49,7 @@ class User(AbstractBaseUser):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
+    wallet_address = models.CharField(max_length=255,blank=False, null=False,)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -97,3 +100,4 @@ def save_avatar(sender=User, instance=None, **kwargs):
         subprocess.Popen([sys.executable, avatarlg], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 save_avatar()
+
